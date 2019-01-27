@@ -1,0 +1,7 @@
+# .gitignore
+
+# Backups
+*~
+
+# MAC stuff
+.DS_Store
