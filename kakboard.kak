@@ -9,7 +9,7 @@ declare-option -docstring 'keys to pull clipboard for' \
     str-list kakboard_paste_keys p P R <a-p> <a-P> <a-R>
 
 declare-option -docstring 'keys to copy to clipboard' \
-    str-list kakboard_copy_keys y c a
+    str-list kakboard_copy_keys y c d
 
 declare-option -hidden bool kakboard_enabled false
 
@@ -47,15 +47,8 @@ define-command -hidden kakboard-with-clipboard -params 1 %{
 define-command -docstring 'enable clipboard integration' kakboard-enable %{
     set-option window kakboard_enabled true
 
-    evaluate-commands %sh{
-        key_regex=
-        for key in $kakboard_copy_keys; do
-            key_regex="$key_regex|$key"
-        done
-    }
-
     hook window -group kakboard NormalKey %sh{
-        eval echo "$kak_opt_kakboard_copy_keys" | tr ' ' '|'
+        eval "echo $kak_opt_kakboard_copy_keys" | tr ' ' '|'
     } %{ nop %sh{
         if test -z "$kak_register" -o "$kak_register" = '"'; then
             printf '%s' "$kak_main_reg_dquote" | $kak_opt_kakboard_copy_cmd
