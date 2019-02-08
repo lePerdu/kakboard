@@ -55,6 +55,15 @@ call `kakboard-pull-for-dquote` to sync the clipboard.
   `%val{register}` is empty.
 
 
+## Limitations
+
+System clipboards generally don't support multiple selections, so only the
+primary selection is copied to the clipboard. Correspondingly, when the `"`
+register is synced to the system clipboard, it is filled with a single value
+and remaining values, if any, are deleted. To get around this, the `"` register
+can be specified when pasting multiple selections as mentioned above.
+
+
 ## License
 
 MIT License
