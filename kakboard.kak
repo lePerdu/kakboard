@@ -26,7 +26,7 @@ define-command -docstring 'copy system clipboard into the " reigster' \
 
 define-command -docstring 'copy system clipboard if current register is "' \
     kakboard-pull-for-dquote %{ evaluate-commands %sh{
-    if test -z "$kak_register" -o "$kak_register" = '"'; then
+    if test -z "$kak_register"; then
         echo "kakboard-pull-clipboard"
     fi
 }}
@@ -50,7 +50,7 @@ define-command -docstring 'enable clipboard integration' kakboard-enable %{
     hook window -group kakboard NormalKey %sh{
         eval "echo $kak_opt_kakboard_copy_keys" | tr ' ' '|'
     } %{ nop %sh{
-        if test -z "$kak_register" -o "$kak_register" = '"'; then
+        if test -z "$kak_register"; then
             printf '%s' "$kak_main_reg_dquote" | $kak_opt_kakboard_copy_cmd
         fi
     }}

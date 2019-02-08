@@ -23,7 +23,9 @@ Clone this repository and `source` the file `kakboard.kak` in your `kakrc`.
 
 Just copy and paste with the normal commands (`y`, `c`, `p`, `R`, etc.)! Copy
 keys copy the main selection to the system clipboard and paste commands sync the
-system clipboard with the `"` register before executing.
+system clipboard with the `"` register before executing. Copying/pasting to/from
+the system clipboard can be prevented by specifying a register to use, even the
+default `"` register.
 
 ### Configuration
 
@@ -50,7 +52,8 @@ call `kakboard-pull-for-dquote` to sync the clipboard.
   clipboard integration
 - `kakboard-pull-clipboard`: Pull system clipboard into the `"` register.
 - `kakboard-pull-for-dquote`: Call `kakboard-pull-clipboard` if
-  `%val{register}` is empty or `"`.
+  `%val{register}` is empty.
+
 
 ## License
 
