@@ -33,11 +33,11 @@ The `kakboard_copy_cmd` and `kakboard_paste_cmd` options specify the commands to
 copy to and paste from the system clipboard. These will be dependent on the
 system, but the following should work:
 
-| OS            | Copy               | Paste              |
-| ------------- | ------------------ | ------------------ |
-| Linux (xsel)  | `xsel -ib`         | `xsel -ob`         |
-| Linux (xclip) | `xclip -i -s clip` | `xclip -o -s clip` |
-| OSX           | `pbcopy`           | `pbpaste`          |
+| OS            | Copy                 | Paste                |
+| ------------- | -------------------- | -------------------- |
+| Linux (xsel)  | `xsel -ib`           | `xsel -ob`           |
+| Linux (xclip) | `xclip -i -sel clip` | `xclip -o -sel clip` |
+| OSX           | `pbcopy`             | `pbpaste`            |
 
 To change the keys for which clipboard syncing is done, just set the
 `kakboard_copy_keys` and `kakboard_paste_keys` options.
