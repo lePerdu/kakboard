@@ -33,11 +33,10 @@ The `kakboard_copy_cmd` and `kakboard_paste_cmd` options specify the commands to
 copy to and paste from the system clipboard. These will be dependent on the
 system, but the following should work:
 
-| OS            | Copy                 | Paste                |
-| ------------- | -------------------- | -------------------- |
-| Linux (xsel)  | `xsel -ib`           | `xsel -ob`           |
-| Linux (xclip) | `xclip -i -sel clip` | `xclip -o -sel clip` |
-| OSX           | `pbcopy`             | `pbpaste`            |
+| OS           | Copy       | Paste      |
+| ------------ | ---------- | ---------- |
+| Linux (xsel) | `xsel -ib` | `xsel -ob` |
+| OSX          | `pbcopy`   | `pbpaste`  |
 
 To change the keys for which clipboard syncing is done, just set the
 `kakboard_copy_keys` and `kakboard_paste_keys` options.
@@ -62,6 +61,9 @@ primary selection is copied to the clipboard. Correspondingly, when the `"`
 register is synced to the system clipboard, it is filled with a single value
 and remaining values, if any, are deleted. To get around this, the `"` register
 can be specified when pasting multiple selections as mentioned above.
+
+`xclip -i` and `wl-copy` both block when called by kakoune (or in any other
+non-interactive context, I assume), and so are not usable here.
 
 
 ## License
