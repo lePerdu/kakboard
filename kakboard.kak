@@ -17,7 +17,7 @@ define-command -docstring 'copy system clipboard into the " reigster' \
     kakboard-pull-clipboard %{ evaluate-commands %sh{
     # Shell expansions are stripped of new lines, so the output of the
     # command has to be wrapped in quotes (and its quotes escaped)
-    # 
+    #
     # (All of this quoting and escaping really messes up kakoune's syntax
     # highlighter)
     printf 'set-register dquote %s' \
@@ -48,7 +48,7 @@ define-command -docstring 'enable clipboard integration' kakboard-enable %{
     set-option window kakboard_enabled true
 
     hook window -group kakboard NormalKey %sh{
-        eval "echo $kak_opt_kakboard_copy_keys" | tr ' ' '|'
+        echo "$kak_opt_kakboard_copy_keys" | tr ' ' '|'
     } %{ nop %sh{
         if test -z "$kak_register"; then
             printf '%s' "$kak_main_reg_dquote" | $kak_opt_kakboard_copy_cmd
@@ -56,10 +56,12 @@ define-command -docstring 'enable clipboard integration' kakboard-enable %{
     }}
 
     evaluate-commands %sh{
-        for key in $kak_opt_kakboard_paste_keys; do
-            escaped=$(eval echo $key | sed -e 's/</<lt>/')
-            echo map global normal "$key" \
+        eval set -- "$kak_quoted_opt_kakboard_paste_keys"
+        while [ $# -gt 0 ]; do
+            escaped=$(echo "$1" | sed -e 's/</<lt>/')
+            echo map global normal "$1" \
                 "': kakboard-with-clipboard $escaped<ret>'"
+            shift
         done
     }
 }
@@ -70,8 +72,10 @@ define-command -docstring 'disable clipboard integration' kakboard-disable %{
     remove-hooks window kakboard
 
     evaluate-commands %sh{
-        for key in $kak_opt_kakboard_paste_keys; do
-            echo unmap global normal "$key"
+        eval set -- "$kak_quoted_opt_kakboard_paste_keys"
+        while [ $# -gt 0 ]; do
+            echo unmap global normal "$1"
+            shift
         done
     }
 }
