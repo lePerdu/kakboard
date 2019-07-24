@@ -37,17 +37,26 @@ and phcopy/pbpaste).
 To change the keys for which clipboard syncing is done, just set the
 `kakboard_copy_keys` and `kakboard_paste_keys` options.
 
-Note: This plugin will map all of the keys in `kakboard_paste_keys`, so if you
-already have mappings for these keys, you will have to edit those bindings to
-call `kakboard-pull-for-dquote` to sync the clipboard before pasting.
+Note: This plugin will map all of the keys in `kakboard_paste_keys` and
+`kakboard_copy_keys`, so if you already have mappings for these keys, you will
+have to edit those bindings to call `kakboard-{pull,push}-if-unset` to sync the
+clipboard after copying / before pasting and remove said keys from kakboard's
+lists.
 
 ### Commands
 
 - `kakboard-enable`/`kakboard-disable`/`kakboard-toggle`: enable/disable/toggle
   clipboard integration
 - `kakboard-pull-clipboard`: Pull system clipboard into the `"` register.
-- `kakboard-pull-for-dquote`: Call `kakboard-pull-clipboard` if
+- `kakboard-pull-if-unset`: Call `kakboard-pull-clipboard` if
   `%val{register}` is empty.
+- `kakboard-with-pull-clipboard <keys>`: Call `kakboard-pull-if-unset` then
+  execute `<keys>`.
+- `kakboard-push-clipboard`: Set system clipboard from the `"` register.
+- `kakboard-push-if-unset`: Call `kakboard-push-clipboard` if
+  `%val{register}` is empty.
+- `kakboard-with-push-clipboard <keys>`: Execute `<kys>` then call
+  `kakboard-push-if-unset`
 
 
 ## Limitations
