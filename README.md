@@ -30,22 +30,16 @@ default `"` register.
 ### Configuration
 
 The `kakboard_copy_cmd` and `kakboard_paste_cmd` options specify the commands to
-copy to and paste from the system clipboard. These will be dependent on the
-system, but the following should work:
-
-| OS                   | Copy                 | Paste                |
-| -------------------- | -------------------- | -------------------- |
-| Linux (xsel)         | `xsel -ib`           | `xsel -ob`           |
-| Linux (xclip)        | `xclip -i -sel clip` | `xclip -o -sel clip` |
-| Linux (wl-clipboard) | `wl-copy -f`         | `wl-paste -n`        |
-| MacOS                | `pbcopy`             | `pbpaste`            |
+copy to and paste from the system clipboard. If they are unset, kakboard will
+try to detect command pair to use (currently supports wl-clipboard, xsel, xclip,
+and phcopy/pbpaste).
 
 To change the keys for which clipboard syncing is done, just set the
 `kakboard_copy_keys` and `kakboard_paste_keys` options.
 
 Note: This plugin will map all of the keys in `kakboard_paste_keys`, so if you
 already have mappings for these keys, you will have to edit those bindings to
-call `kakboard-pull-for-dquote` to sync the clipboard.
+call `kakboard-pull-for-dquote` to sync the clipboard before pasting.
 
 ### Commands
 

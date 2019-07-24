@@ -1,9 +1,9 @@
 
 declare-option -docstring 'command to copy to clipboard' \
-    str kakboard_copy_cmd "xsel --input --clipboard"
+    str kakboard_copy_cmd
 
 declare-option -docstring 'command to paste from clipboard' \
-    str kakboard_paste_cmd "xsel --output --clipboard"
+    str kakboard_paste_cmd
 
 declare-option -docstring 'keys to pull clipboard for' \
     str-list kakboard_paste_keys p P R <a-p> <a-P> <a-R>
@@ -44,8 +44,59 @@ define-command -hidden kakboard-with-clipboard -params 1 %{
     }
 }
 
+define-command -hidden kakboard-autodetect %{
+    evaluate-commands %sh{
+        # Don't override if there are already commands
+        if [ -n "$kak_opt_kakboard_copy_cmd" -o \
+            -n "$kak_opt_kakboard_paste_cmd" ]
+        then
+            exit
+        fi
+
+        copy=
+        paste=
+        case $(uname -s) in
+            Linux)
+                if [ -n "$WAYLAND_DISPLAY" ] \
+                    && command -v wl-copy >/dev/null \
+                    && command -v wl-paste >/dev/null
+                then
+                    # wl-clipboard
+                    copy="wl-copy --foreground"
+                    paste="wl-paste --no-newline"
+                elif [ -n "$DISPLAY" ] && command -v xsel >/dev/null; then
+                    # xsel
+                    copy="xsel --input --clipboard"
+                    paste="xsel --output --clipboard"
+                elif [ -n "$DISPLAY" ] && command -v xclip >/dev/null; then
+                    # xclip
+                    copy="xclip -in -selection clipboard"
+                    paste="xclip -out -selection clipboard"
+                fi
+                ;;
+
+            Darwin)
+                copy="pbcopy"
+                paste="pbpaste"
+                ;;
+
+            *)
+                ;;
+        esac
+
+        if [ -n "$copy" -a -n "$paste" ]; then
+            echo "set-option global kakboard_copy_cmd '$copy'"
+            echo "set-option global kakboard_paste_cmd '$paste'"
+        else
+            echo "echo -debug 'kakboard: Could not auto-detect clipboard commands. Please set them explicitly.'"
+        fi
+    }
+}
+
 define-command -docstring 'enable clipboard integration' kakboard-enable %{
     set-option window kakboard_enabled true
+
+    kakboard-autodetect
 
     hook window -group kakboard NormalKey %sh{
         echo "$kak_opt_kakboard_copy_keys" | tr ' ' '|'
