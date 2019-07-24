@@ -154,7 +154,8 @@ define-command -docstring 'disable clipboard integration' kakboard-disable %{
     remove-hooks window kakboard
 
     evaluate-commands %sh{
-        eval set -- "$kak_quoted_opt_kakboard_paste_keys"
+        eval set -- "$kak_quoted_opt_kakboard_paste_keys" \
+                    "$kak_quoted_opt_kakboard_copy_keys"
         while test $# -gt 0; do
             echo unmap global normal "$1"
             shift
