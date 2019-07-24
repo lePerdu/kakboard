@@ -39,7 +39,7 @@ define-command -docstring 'copy system clipboard then execute keys' \
         if test -n "$kak_register"; then
             register="\"$kak_register"
         fi
-        echo "execute-keys '$register$kak_count$1'"
+        echo "execute-keys -save-regs '' '$register$kak_count$1'"
     }
 }
 
