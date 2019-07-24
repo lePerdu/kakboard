@@ -51,7 +51,8 @@ define-command -docstring 'enable clipboard integration' kakboard-enable %{
         echo "$kak_opt_kakboard_copy_keys" | tr ' ' '|'
     } %{ nop %sh{
         if test -z "$kak_register"; then
-            printf '%s' "$kak_main_reg_dquote" | $kak_opt_kakboard_copy_cmd
+            printf '%s' "$kak_main_reg_dquote" \
+                | ($kak_opt_kakboard_copy_cmd) >/dev/null 2>&1 &
         fi
     }}
 
