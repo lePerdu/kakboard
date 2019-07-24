@@ -33,15 +33,13 @@ define-command -docstring 'copy system clipboard if current register is unset' \
 
 # Pull the clipboard and execute the key with the same context
 define-command -docstring 'copy system clipboard then execute keys' \
-		 kakboard-with-pull-clipboard -params 1 %{
+         kakboard-with-pull-clipboard -params 1 %{
+    kakboard-pull-if-unset
     evaluate-commands %sh{
         if test -n "$kak_register"; then
-            register="$kak_register"
-        else
-            register='"'
+            register="\"$kak_register"
         fi
-        echo "kakboard-pull-if-unset"
-        echo "execute-keys '\"$register$kak_count$1'"
+        echo "execute-keys '$register$kak_count$1'"
     }
 }
 
@@ -56,33 +54,32 @@ define-command -docstring 'set system clipboard from the " register' \
 
 define-command -docstring 'set system clipboard if current register is unset' \
         kakboard-push-if-unset %{ evaluate-commands %sh{
-    if [ -z "$kak_register" ]; then
+    if test -z "$kak_register"; then
         echo "kakboard-push-clipboard"
     fi
 }}
 
 # Set the clipboard and execute the key with the same context
 define-command -docstring 'execute keys then set system clipboard' \
-		 kakboard-with-push-clipboard -params 1 %{
+         kakboard-with-push-clipboard -params 1 %{
     evaluate-commands %sh{
         if test -n "$kak_register"; then
-            register="$kak_register"
-        else
-            register='"'
+            register="\"$kak_register"
         fi
         # Don't preserve registers since we want the same behavior as just
         # executing the keys (and don't want to preseve the " register)
-        echo "execute-keys -save-regs '' '\"$register$kak_count$1'"
+        echo "execute-keys -save-regs '' '$register$kak_count$1'"
     }
-    # Has to be outside of the sh expansion so that the register will update
+    # Has to be outside of the sh expansion so that the register environment
+    # variable will update
     kakboard-push-if-unset
 }
 
 define-command -hidden kakboard-autodetect %{
     evaluate-commands %sh{
         # Don't override if there are already commands
-        if [ -n "$kak_opt_kakboard_copy_cmd" -o \
-            -n "$kak_opt_kakboard_paste_cmd" ]
+        if test -n "$kak_opt_kakboard_copy_cmd" -o \
+            -n "$kak_opt_kakboard_paste_cmd"
         then
             exit
         fi
@@ -91,18 +88,18 @@ define-command -hidden kakboard-autodetect %{
         paste=
         case $(uname -s) in
             Linux)
-                if [ -n "$WAYLAND_DISPLAY" ] \
+                if test -n "$WAYLAND_DISPLAY" \
                     && command -v wl-copy >/dev/null \
                     && command -v wl-paste >/dev/null
                 then
                     # wl-clipboard
                     copy="wl-copy --foreground"
                     paste="wl-paste --no-newline"
-                elif [ -n "$DISPLAY" ] && command -v xsel >/dev/null; then
+                elif test -n "$DISPLAY" && command -v xsel >/dev/null; then
                     # xsel
                     copy="xsel --input --clipboard"
                     paste="xsel --output --clipboard"
-                elif [ -n "$DISPLAY" ] && command -v xclip >/dev/null; then
+                elif test -n "$DISPLAY" && command -v xclip >/dev/null; then
                     # xclip
                     copy="xclip -in -selection clipboard"
                     paste="xclip -out -selection clipboard"
@@ -118,7 +115,7 @@ define-command -hidden kakboard-autodetect %{
                 ;;
         esac
 
-        if [ -n "$copy" -a -n "$paste" ]; then
+        if test -n "$copy" -a -n "$paste"; then
             echo "set-option global kakboard_copy_cmd '$copy'"
             echo "set-option global kakboard_paste_cmd '$paste'"
         else
@@ -134,7 +131,7 @@ define-command -docstring 'enable clipboard integration' kakboard-enable %{
 
     evaluate-commands %sh{
         eval set -- "$kak_quoted_opt_kakboard_paste_keys"
-        while [ $# -gt 0 ]; do
+        while test $# -gt 0; do
             escaped=$(echo "$1" | sed -e 's/</<lt>/')
             echo map global normal "$1" \
                 "': kakboard-with-pull-clipboard $escaped<ret>'"
@@ -142,7 +139,7 @@ define-command -docstring 'enable clipboard integration' kakboard-enable %{
         done
 
         eval set -- "$kak_quoted_opt_kakboard_copy_keys"
-        while [ $# -gt 0 ]; do
+        while test $# -gt 0; do
             escaped=$(echo "$1" | sed -e 's/</<lt>/')
             echo map global normal "$1" \
                 "': kakboard-with-push-clipboard $escaped<ret>'"
@@ -158,7 +155,7 @@ define-command -docstring 'disable clipboard integration' kakboard-disable %{
 
     evaluate-commands %sh{
         eval set -- "$kak_quoted_opt_kakboard_paste_keys"
-        while [ $# -gt 0 ]; do
+        while test $# -gt 0; do
             echo unmap global normal "$1"
             shift
         done
