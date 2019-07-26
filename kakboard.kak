@@ -39,7 +39,7 @@ define-command -docstring 'copy system clipboard then execute keys' \
         if test -n "$kak_register"; then
             register="\"$kak_register"
         fi
-        echo "execute-keys -save-regs '' '$register$kak_count$1'"
+        echo "execute-keys -with-hooks -save-regs '' '$register$kak_count$1'"
     }
 }
 
@@ -68,7 +68,7 @@ define-command -docstring 'execute keys then set system clipboard' \
         fi
         # Don't preserve registers since we want the same behavior as just
         # executing the keys (and don't want to preseve the " register)
-        echo "execute-keys -save-regs '' '$register$kak_count$1'"
+        echo "execute-keys -with-hooks -save-regs '' '$register$kak_count$1'"
     }
     # Has to be outside of the sh expansion so that the register environment
     # variable will update
