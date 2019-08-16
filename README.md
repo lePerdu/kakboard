@@ -32,7 +32,7 @@ default `"` register.
 The `kakboard_copy_cmd` and `kakboard_paste_cmd` options specify the commands to
 copy to and paste from the system clipboard. If they are unset, kakboard will
 try to detect command pair to use (currently supports wl-clipboard, xsel, xclip,
-and phcopy/pbpaste).
+and pbcopy/pbpaste).
 
 To change the keys for which clipboard syncing is done, just set the
 `kakboard_copy_keys` and `kakboard_paste_keys` options.
