@@ -22,7 +22,7 @@ define-command -docstring 'copy system clipboard into the " reigster' \
     # highlighter)
     if test -n "$kak_opt_kakboard_paste_cmd"; then
         printf 'set-register dquote %s' \
-            "'$($kak_opt_kakboard_paste_cmd | sed -e "s/'/''/g"; echo \')"
+            "%🦐$($kak_opt_kakboard_paste_cmd; echo 🦐)"
     else
         echo "echo -debug 'kakboard: kakboard_paste_cmd not set'"
     fi
