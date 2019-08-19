@@ -20,8 +20,12 @@ define-command -docstring 'copy system clipboard into the " reigster' \
     #
     # (All of this quoting and escaping really messes up kakoune's syntax
     # highlighter)
-    printf 'set-register dquote %s' \
-        "'$($kak_opt_kakboard_paste_cmd | sed -e "s/'/''/g"; echo \')"
+    if test -n "$kak_opt_kakboard_paste_cmd"; then
+        printf 'set-register dquote %s' \
+            "'$($kak_opt_kakboard_paste_cmd | sed -e "s/'/''/g"; echo \')"
+    else
+        echo "echo -debug 'kakboard: kakboard_paste_cmd not set'"
+    fi
 }}
 
 define-command -docstring 'copy system clipboard if current register is unset' \
@@ -48,8 +52,12 @@ define-command -docstring 'set system clipboard from the " register' \
     # The copy command is executed and forked in a subshell because some
     # commands (looking at you, xclip and wl-copy) block when executed by
     # kakoune normally
-    printf '%s' "$kak_main_reg_dquote" \
-        | ($kak_opt_kakboard_copy_cmd) >/dev/null 2>&1 &
+    if test -n "$kak_opt_kakboard_copy_cmd"; then
+        printf '%s' "$kak_main_reg_dquote" \
+            | ($kak_opt_kakboard_copy_cmd) >/dev/null 2>&1 &
+    else
+        echo "echo -debug 'kakboard: kakboard_copy_cmd not set'"
+    fi
 }}
 
 define-command -docstring 'set system clipboard if current register is unset' \
@@ -115,21 +123,24 @@ define-command -hidden kakboard-autodetect %{
                 ;;
         esac
 
-        if test -n "$copy" -a -n "$paste"; then
-            echo "set-option global kakboard_copy_cmd '$copy'"
-            echo "set-option global kakboard_paste_cmd '$paste'"
-        else
-            echo "echo -debug 'kakboard: Could not auto-detect clipboard commands. Please set them explicitly.'"
-        fi
+        echo "set-option global kakboard_copy_cmd '$copy'"
+        echo "set-option global kakboard_paste_cmd '$paste'"
     }
 }
 
 define-command -docstring 'enable clipboard integration' kakboard-enable %{
     set-option window kakboard_enabled true
-
     kakboard-autodetect
 
     evaluate-commands %sh{
+        if test -z "$kak_opt_kakboard_copy_cmd" -o \
+            -z "$kak_opt_kakboard_paste_cmd"
+        then
+            echo "echo -debug 'kakboard: Could not auto-detect clipboard commands. Please set them explicitly.'"
+        fi
+
+        # Still make the bindings so that they can be set later
+
         eval set -- "$kak_quoted_opt_kakboard_paste_keys"
         while test $# -gt 0; do
             escaped=$(echo "$1" | sed -e 's/</<lt>/')
