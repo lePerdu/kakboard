@@ -13,7 +13,7 @@ declare-option -docstring 'keys to copy to clipboard' \
 
 declare-option -hidden bool kakboard_enabled false
 
-define-command -docstring 'copy system clipboard into the " reigster' \
+define-command -docstring 'copy system clipboard into the " register' \
         kakboard-pull-clipboard %{ evaluate-commands %sh{
     # Shell expansions are stripped of new lines, so the output of the
     # command has to be wrapped in quotes (and its quotes escaped)
