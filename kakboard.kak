@@ -95,7 +95,12 @@ define-command -hidden kakboard-autodetect %{
         copy=
         paste=
         case $(uname -s) in
-            Linux)
+            Darwin)
+                copy="pbcopy"
+                paste="pbpaste"
+                ;;
+
+            *)
                 if test -n "$WAYLAND_DISPLAY" \
                     && command -v wl-copy >/dev/null \
                     && command -v wl-paste >/dev/null
@@ -112,14 +117,6 @@ define-command -hidden kakboard-autodetect %{
                     copy="xclip -in -selection clipboard"
                     paste="xclip -out -selection clipboard"
                 fi
-                ;;
-
-            Darwin)
-                copy="pbcopy"
-                paste="pbpaste"
-                ;;
-
-            *)
                 ;;
         esac
 
