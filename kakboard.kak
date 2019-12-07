@@ -28,7 +28,9 @@ define-command -docstring 'copy system clipboard into the " register' \
         #     "'$($kak_opt_kakboard_paste_cmd | sed -e "s/'/''/g"; echo \')"
 
         # This is probably a lot less efficient, but works more consistently
-        temp_file=$(mktemp /tmp/kakboard-paste-XXXX)
+        # mktemp is quite platform-dependant, but this should work on all (most)
+        # platforms
+        temp_file=$(mktemp ${TMPDIR:-/tmp}/kakboard-paste-XXXXXX)
         $kak_opt_kakboard_paste_cmd >$temp_file
         echo "set-register dquote %file{$temp_file}"
         echo "nop %sh{rm $temp_file 2>/dev/null}"
