@@ -21,8 +21,19 @@ define-command -docstring 'copy system clipboard into the " register' \
     # (All of this quoting and escaping really messes up kakoune's syntax
     # highlighter)
     if test -n "$kak_opt_kakboard_paste_cmd"; then
-        printf 'set-register dquote %s' \
-            "'$($kak_opt_kakboard_paste_cmd | sed -e "s/'/''/g"; echo \')"
+        # This doesn't always work because sed appends a new line regardless of
+        # whether or not there was one at the end of the text on some patforms
+        # / versions
+        # printf 'set-register dquote %s' \
+        #     "'$($kak_opt_kakboard_paste_cmd | sed -e "s/'/''/g"; echo \')"
+
+        # This is probably a lot less efficient, but works more consistently
+        # mktemp is quite platform-dependant, but this should work on all (most)
+        # platforms
+        temp_file=$(mktemp ${TMPDIR:-/tmp}/kakboard-paste-XXXXXX)
+        $kak_opt_kakboard_paste_cmd >$temp_file
+        echo "set-register dquote %file{$temp_file}"
+        echo "nop %sh{rm $temp_file 2>/dev/null}"
     else
         echo "echo -debug 'kakboard: kakboard_paste_cmd not set'"
     fi
