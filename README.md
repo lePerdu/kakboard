@@ -16,7 +16,11 @@ plug "lePerdu/kakboard" %{
 
 ### Manually
 
-Clone this repository and `source` the file `kakboard.kak` in your `kakrc`.
+Clone this repository and `source` the file `kakboard.kak` in your `kakrc`, then
+set it up to run with:
+```
+hook global WinCreate .* %{ kakboard-enable }
+```
 
 
 ## Usage
