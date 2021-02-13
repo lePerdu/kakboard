@@ -120,6 +120,10 @@ define-command -hidden kakboard-autodetect %{
                     # wl-clipboard
                     copy="wl-copy --foreground"
                     paste="wl-paste --no-newline"
+                elif test -n "$DISPLAY" && command -v copyq >/dev/null; then
+                    # copyq
+                    copy="copyq add -"
+                    paste="copyq clipboard"
                 elif test -n "$DISPLAY" && command -v xsel >/dev/null; then
                     # xsel
                     copy="xsel --input --clipboard"
