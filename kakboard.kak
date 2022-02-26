@@ -33,7 +33,9 @@ define-command -docstring 'copy system clipboard into the " register' \
         temp_file=$(mktemp ${TMPDIR:-/tmp}/kakboard-paste-XXXXXX)
 
         eval $kak_opt_kakboard_paste_cmd >$temp_file
-        echo "set-register dquote %file{$temp_file}"
+        if [ "$kak_main_reg_dquote" != "$(cat $temp_file)" ]; then
+            echo "set-register dquote %file{$temp_file}"
+        fi
         echo "nop %sh{rm $temp_file 2>/dev/null}"
     else
         echo "echo -debug 'kakboard: kakboard_paste_cmd not set'"
