@@ -16,8 +16,12 @@ plug "lePerdu/kakboard" %{
 
 ### Manually
 
-Clone this repository and `source` the file `kakboard.kak` in your `kakrc`, then
-set it up to run with:
+There are two methods:
+
+1. Clone this repository and `source` the file `kakboard.kak` in your `kakrc`, or
+2. Simply clone the repo into your `autoload` subdirectory.
+
+Then, set it up to run with:
 ```
 hook global WinCreate .* %{ kakboard-enable }
 ```
