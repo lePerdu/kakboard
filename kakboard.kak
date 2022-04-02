@@ -109,36 +109,54 @@ define-command -hidden kakboard-autodetect %{
             exit
         fi
 
-        copy=
-        paste=
-        case $(uname -s) in
-            Darwin)
-                copy="pbcopy"
-                paste="pbpaste"
-                ;;
-
+        case $(uname -s | tr '[:upper:]' '[:lower:]') in
+            'cygwin')
+                 copy='tee /dev/clipboard 2>&-'
+                paste='cat /dev/clipboard'
+            ;;
+            'darwin'*)
+                 copy='pbcopy'
+                paste='pbpaste'
+            ;;
             *)
-                if test -n "$WAYLAND_DISPLAY" \
-                    && command -v wl-copy >/dev/null \
-                    && command -v wl-paste >/dev/null
-                then
-                    # wl-clipboard
-                    copy="wl-copy --foreground"
-                    paste="wl-paste --no-newline"
-                elif test -n "$DISPLAY" && command -v xsel >/dev/null; then
-                    # xsel
-                    copy="xsel --input --clipboard"
-                    paste="xsel --output --clipboard"
-                elif test -n "$DISPLAY" && command -v xclip >/dev/null; then
-                    # xclip
-                    copy="xclip -in -selection clipboard"
-                    paste="xclip -out -selection clipboard"
+                if [ -n "$WAYLAND_DISPLAY" ]; then
+                    if [ -x "$(command -v wl-copy)" ] && [ -x "$(command -v wl-paste)" ]; then
+                         copy='wl-copy'
+                        paste='wl-paste --no-newline'
+                    else
+                        printf '%s\n%s' "echo -debug \"kakboard: can't interact with Wayland's clipboard\"" \
+                                        "echo -debug \"please install 'wl-clipboard'\""
+
+                        exit 1
+                    fi
+                elif [ -n "$DISPLAY" ]; then
+                    if [ -x "$(command -v xclip)" ]; then
+                         copy='xclip -in  -selection clipboard'
+                        paste='xclip -out -selection clipboard'
+                    elif [ -x "$(command -v xsel)" ]; then
+                         copy='xsel --input  --clipboard'
+                        paste='xsel --output --clipboard'
+                    else
+                        printf '%s\n%s' "echo -debug \"kakboard: can't interact with Xorg's clipboard\"" \
+                                        "echo -debug \"please install 'xclip' or 'xsel'\""
+
+                        exit 1
+                    fi
+                else
+                    if [ -x "$(command -v termux-clipboard-set)" ]; then
+                         copy='termux-clipboard-set'
+                        paste='termux-clipboard-get'
+                    else
+                        printf '%s' "echo -debug \"kakboard: this system is not supported\""
+
+                        exit 1
+                    fi
                 fi
-                ;;
+            ;;
         esac
 
-        echo "set-option global kakboard_copy_cmd '$copy'"
-        echo "set-option global kakboard_paste_cmd '$paste'"
+        printf '%s\n%s' "set-option global kakboard_copy_cmd '$copy'" \
+                        "set-option global kakboard_paste_cmd '$paste'"
     }
 }
 
