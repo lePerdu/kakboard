@@ -119,7 +119,10 @@ define-command -hidden kakboard-autodetect %{
                 paste='pbpaste'
             ;;
             *)
-                if [ -n "$WAYLAND_DISPLAY" ]; then
+                if [ "$DESKTOP_SESSION" = 'plasma' ] && [ -x "$(command -v qdbus6)" ] && [ -x "$(command -v sed)" ] && [ -x "$(command -v xargs)" ]; then
+                     copy='xargs -0 qdbus6 org.kde.klipper /klipper setClipboardContents'
+                    paste='qdbus6 org.kde.klipper /klipper getClipboardContents | sed -z "$ s/\n$//"'
+                elif [ -n "$WAYLAND_DISPLAY" ]; then
                     if [ -x "$(command -v wl-copy)" ] && [ -x "$(command -v wl-paste)" ]; then
                          copy='wl-copy'
                         paste='wl-paste --no-newline'
