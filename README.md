@@ -47,6 +47,7 @@ Currently supports:
 - [xsel](http://www.kfish.org/software/xsel/)
 - [xclip](https://github.com/astrand/xclip)
 - pbcopy/pbpaste (macOS)
+- klipper (KDE Plasma)
 
 To change the keys for which clipboard syncing is done, just set the
 `kakboard_copy_keys` and `kakboard_paste_keys` options.
